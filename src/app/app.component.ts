@@ -23,6 +23,7 @@ export class MyApp {
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();
       this.createDatabase();
+      this.tasksService.init();
     });
   }
 

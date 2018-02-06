@@ -30,19 +30,41 @@ export class TasksService {
         console.log('network connected!');
         this.connected = true;
 
-        this.getAll().then((unsyncList) =>{
-          console.log('UNSYNCLIST FROM DB: ',unsyncList);
-          // Get all the rows with sync = false (boolean)
-          // then send it to the server
+        // STEPS TODO HERE
+        // Get all the rows with sync = false (boolean) //Done
+        // then send it to the server
+
+        // Check and control the if the response from the sql server was true
+        // if true then
+        // was correctly saved from the server
+        // else 
+        // try to send it again
+
+        this.getAllSync().then((unsyncList : any) =>{
+          console.log('BEFORE FOR: ', unsyncList.rows.item(0));
+          console.log('BEFORE FOR: ', unsyncList.rows.item(1));
+          console.log('BEFORE FOR: ', unsyncList.rows.item(2));
+          console.log('BEFORE FOR: ', unsyncList.rows.item(3));
+
+          let tasks = [];
+          for (let i = 0; i < unsyncList.rows.length; i++) {
+            console.log('UNSYNCLIST IN FOR: ', unsyncList.rows.item());
+
+           tasks.push( unsyncList.rows.item(i) );
+         }
+          // SEND QUERY HERE FOR ALL THE ROW'S THAT HAVE sync in false
+          // unsyncList contains all the rows with sync = false
+
+          //HTTP QUERY GOES HERE!
+
+          //Then if the http query is succesfuly, update the sync in the db
+          // this.updateTask(unsyncList.findIndex());
           
         })
         .catch(error => Promise.reject(error));
-
-        // SEND QUERY HERE FOR ALL THE ROW'S THAT HAVE sync in false
-
         
         // We just got a connection but we need to wait briefly
-         // before we determine the connection type. Might need to wait.
+        // before we determine the connection type. Might need to wait.
         // prior to doing any api requests as well.
         setTimeout(() => {
           if (this.network.type === 'wifi') {
@@ -65,16 +87,15 @@ public iAmConnected() {
 
   create(task: any){
    // console.log('TASKS CONTENT', task.toString());
-   //TO DO: Add the type of the query ( POST, PUT, GET );
 
-    let sql = 'INSERT INTO tasks(url, data, sync, params, date) VALUES(?,?,?,?,?)';
+    let sql = 'INSERT INTO tasks(url, data, sync, params, date, type) VALUES(?,?,?,?,?,?)';
     //console.log('SQL INSERT TASKS: ', sql.toString());
-    return this.db.executeSql(sql, [task.url, task.data, task.sync, task.params, task.date]);
+    return this.db.executeSql(sql, [task.url, task.data, task.sync, task.params, task.date, task.type]);
   }
 
   createTable(){
 
-    let sql = 'CREATE TABLE IF NOT EXISTS tasks(id INTEGER PRIMARY KEY AUTOINCREMENT, url VARCHAR, data VARCHAR, sync VARCHAR, params VARCHAR, date VARCHAR)';
+    let sql = 'CREATE TABLE IF NOT EXISTS tasks(id INTEGER PRIMARY KEY AUTOINCREMENT, url VARCHAR, data VARCHAR, sync bit, params VARCHAR, date date, type VARCHAR)';
     return this.db.executeSql(sql, []);
   }
 
@@ -85,7 +106,7 @@ public iAmConnected() {
 
   getAll(){
     
-    let sql = "SELECT * FROM tasks WHERE sync LIKE 'false' ";
+    let sql = "SELECT * FROM tasks";
     return this.db.executeSql(sql, [])
     .then(response => {
       let tasks = [];
@@ -97,9 +118,32 @@ public iAmConnected() {
     .catch(error => Promise.reject(error));
   }
 
-  update(task: any){
-    let sql = 'UPDATE tasks SET title=?, completed=? WHERE id=?';
-    return this.db.executeSql(sql, [task.title, task.completed, task.id]);
+  getAllSync(){
+    
+    let syncState = false;
+    let sql = "SELECT * FROM tasks WHERE sync = ?";
+    return this.db.executeSql(sql, [syncState])
+    .then(response => {
+      let tasks = [];
+      for (let index = 0; index < response.rows.length; index++) {
+        tasks.push( response.rows.item(index) );
+      }
+      return Promise.resolve( tasks );
+    })
+    .catch(error => Promise.reject(error));
   }
 
+  updateTask(task: any){
+    let sql = 'UPDATE tasks SET sync = ? WHERE id = ?';
+    return this.db.executeSql(sql, [task.sync, task.id]);
+  }
+
+  // Idk if we recive any arrays but i created the method
+  parseObjectArraytoJSON(array) {
+    var jsonArray = [];
+    for (var i = 0; i < array.length; ++i) {
+        jsonArray.push(array[i].toJSON());
+    }
+    return jsonArray;
+}
 }

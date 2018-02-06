@@ -13,10 +13,27 @@
     <button ion-button 
     block
     (click)="testConnection()"
-    >Test NetWork</button>
-  <ion-buttons right>
-    <button ion-button icon-only (click)="insertSQL()">
+    >Test NetWork
+  </button>
+  <ion-buttons>
+    <button block ion-button icon-only (click)="getAllTasks()">
+      <ion-icon name="add"> GET ALL DATA </ion-icon>
+    </button>
+  </ion-buttons>
+  <ion-list>
+    <ion-item *ngFor="let item of rowsInDb">
+      {{ item.url }}
+    </ion-item>
+  </ion-list>
+  <ion-buttons>
+    <button block ion-button icon-only (click)="insertSQL()">
       <ion-icon name="add"> INSERT SQL </ion-icon>
     </button>
   </ion-buttons>
+  
+  <ion-list>
+    <button ion-item *ngFor="let item of rowsInDb">
+      {{ item }}
+    </button>  
+  </ion-list>
 </ion-content>

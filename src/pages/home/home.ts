@@ -12,8 +12,8 @@ export class HomePage {
 
   // public properties
 
-  tasks: any[] = [];
-
+  public taskList: any;
+  public rowsInDb: any;
   // private fields 
 
   constructor(
@@ -46,18 +46,32 @@ export class HomePage {
     this.tasksService.delete(task)
     .then(response => {
       console.log( response );
-      this.tasks.splice(index, 1);
+      this.taskList.splice(index, 1);
     })
     .catch( error => {
       console.error( error );
     })
   }
 
-  getAllTasks(){
+  getAllUnSyncTasks(){
     this.tasksService.getAll()
     .then(tasks => {
       console.log(tasks);
-      this.tasks = tasks;
+      this.taskList = tasks;
+      if(this.taskList.rows.length > 0) {
+        this.rowsInDb = [];
+        for(let i = 0; i < this.taskList.rows.length; i++) {
+          console.log('ITEM: ',this.taskList.rows.item(i));
+          this.rowsInDb.push({
+            "id":  this.taskList.rows.item(i).id,
+            "url":  this.taskList.rows.item(i).url,
+            "sync":  this.taskList.rows.item(i).sync,
+            "params":  this.taskList.rows.item(i).params,
+            "date":  this.taskList.rows.item(i).date,
+            "type":  this.taskList.rows.item(i).type
+          });
+        }
+      }
     })
     .catch( error => {
       console.error( error );
@@ -67,9 +81,9 @@ export class HomePage {
   updateTask(task, index){
     task = Object.assign({}, task);
     task.completed = !task.completed;
-    this.tasksService.update(task)
+    this.tasksService.updateTask(task)
     .then( response => {
-      this.tasks[index] = task;
+      this.taskList[index] = task;
     })
     .catch( error => {
       console.error( error );
@@ -78,28 +92,27 @@ export class HomePage {
 
   insertSQL(){
 
-    /* name: item.name + ' ' + item.lastName,
-    userId: item.objectId,
-    image: item.image ? item.image.url : '',
-    shortName: item.name,
-    itsNotMe: item.objectId !== this.currentuserId 
-    url, data, sync, params, date
-    
-    */
+    let queryUrl = 'http://www.google.es';
+    let dataJson = { content : 'Insert Json Here' };
+    let isSync = false;
+    let parameters = 'Subí y bajá';
+    let inDate = new Date();
+    let queryType = 'GET';
+
 
     let data: any = 
     {
-      url: 'http://chamomarica.com',
-      data: 'Insert Json Here',
-      sync: 'True',
-      params: 'Parap pa pa params (8)',
-      date: '2018-01-01'
-
+      url: queryUrl,
+      data: JSON.stringify(dataJson),
+      sync: isSync,
+      params: parameters,
+      date: inDate,
+      type: queryType
     }
     
     this.tasksService.create(data)
             .then(response => {
-              this.tasks.unshift( data );
+              this.taskList.unshift( data );
             })
             .catch( error => {
               console.error( error );
