@@ -1,0 +1,22 @@
+<ion-header>
+  <ion-navbar color="primary">
+    <ion-title>Tasks</ion-title>
+    <ion-buttons right>
+      <button ion-button icon-only (click)="openAlertNewTask()">
+        <ion-icon name="add"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+    <button ion-button 
+    block
+    (click)="testConnection()"
+    >Test NetWork</button>
+  <ion-buttons right>
+    <button ion-button icon-only (click)="insertSQL()">
+      <ion-icon name="add"> INSERT SQL </ion-icon>
+    </button>
+  </ion-buttons>
+</ion-content>
