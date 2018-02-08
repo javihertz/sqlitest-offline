@@ -19,8 +19,8 @@ export class HomePage {
   constructor(
     public alertCtrl: AlertController,
     public navCtrl: NavController,
-    public tasksService: TasksService
-  ) {}
+    public tasksService: TasksService,
+  ) { }
 
   // Ionic's or Angular's triggers
 
@@ -28,94 +28,98 @@ export class HomePage {
 
     console.log('WORKS');
     if (this.tasksService.iAmConnected()) {
-        console.log('AVAILABLE FOR SEND QUERY');
+      console.log('AVAILABLE FOR SEND QUERY');
 
     } else {
-        console.log('NOT AVAILABLE FOR SEND QUERY');
+      console.log('NOT AVAILABLE FOR SEND QUERY');
 
     }
 
-}
-  ionViewDidLoad(){
-    this.tasksService.init();
+  }
+  ionViewDidLoad() {
   }
 
   // public methods
 
-  deleteTask(task: any, index){
+  deleteTask(task: any, index) {
     this.tasksService.delete(task)
-    .then(response => {
-      console.log( response );
-      this.taskList.splice(index, 1);
-    })
-    .catch( error => {
-      console.error( error );
-    })
+      .then(response => {
+        console.log(response);
+        this.taskList.splice(index, 1);
+      })
+      .catch(error => {
+        console.error(error);
+      })
   }
 
-  getAllUnSyncTasks(){
+  getAllTasks() {
     this.tasksService.getAll()
-    .then(tasks => {
-      console.log(tasks);
-      this.taskList = tasks;
-      if(this.taskList.rows.length > 0) {
-        this.rowsInDb = [];
-        for(let i = 0; i < this.taskList.rows.length; i++) {
-          console.log('ITEM: ',this.taskList.rows.item(i));
-          this.rowsInDb.push({
-            "id":  this.taskList.rows.item(i).id,
-            "url":  this.taskList.rows.item(i).url,
-            "sync":  this.taskList.rows.item(i).sync,
-            "params":  this.taskList.rows.item(i).params,
-            "date":  this.taskList.rows.item(i).date,
-            "type":  this.taskList.rows.item(i).type
-          });
+      .then(tasks => {
+        console.log(tasks);
+        this.taskList = tasks;
+        if (this.taskList.rows.length > 0) {
+          this.rowsInDb = [];
+          for (let i = 0; i < this.taskList.rows.length; i++) {
+            console.log('ITEM: ', this.taskList.rows.item(i));
+            this.rowsInDb.push({
+              "id": this.taskList.rows.item(i).id,
+              "url": this.taskList.rows.item(i).url,
+              "sync": this.taskList.rows.item(i).sync,
+              "params": this.taskList.rows.item(i).params,
+              "date": this.taskList.rows.item(i).date,
+              "type": this.taskList.rows.item(i).type
+            });
+          }
         }
-      }
-    })
-    .catch( error => {
-      console.error( error );
-    })
+      })
+      .catch(error => {
+        console.error(error);
+      })
+      
   }
 
-  updateTask(task, index){
-    task = Object.assign({}, task);
-    task.completed = !task.completed;
-    this.tasksService.updateTask(task)
-    .then( response => {
-      this.taskList[index] = task;
-    })
-    .catch( error => {
-      console.error( error );
-    })
+  updateTaskById() {
+
+    let task = {
+      sync : true,
+      id: 3
+    }
+    // task.completed = !task.completed;
+    this.tasksService.updateTask(task.sync, task.id)
+      .then(response => {
+           this.taskList[task.id] = task;
+        // this.taskList[index] = task;
+      })
+      .catch(error => {
+        console.error(error);
+      })
   }
 
-  insertSQL(){
+  insertSQL() {
 
     let queryUrl = 'http://www.google.es';
-    let dataJson = { content : 'Insert Json Here' };
+    let dataJson = { content: 'Insert Json Here' };
     let isSync = false;
     let parameters = 'Subí y bajá';
     let inDate = new Date();
     let queryType = 'GET';
 
+    let data: any =
+      {
+        url: queryUrl,
+        data: JSON.stringify(dataJson),
+        sync: isSync,
+        params: parameters,
+        date: inDate,
+        type: queryType
+      }
 
-    let data: any = 
-    {
-      url: queryUrl,
-      data: JSON.stringify(dataJson),
-      sync: isSync,
-      params: parameters,
-      date: inDate,
-      type: queryType
-    }
-    
     this.tasksService.create(data)
-            .then(response => {
-              this.taskList.unshift( data );
-            })
-            .catch( error => {
-              console.error( error );
-            })
+      .then(response => {
+        this.taskList.unshift(data);
+      })
+      .catch(error => {
+        console.error(error);
+      })
   }
 }

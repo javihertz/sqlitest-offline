@@ -16,24 +16,28 @@
     >Test NetWork
   </button>
   <ion-buttons>
-    <button block ion-button icon-only (click)="getAllTasks()">
-      <ion-icon name="add"> GET ALL DATA </ion-icon>
-    </button>
-  </ion-buttons>
-  <ion-list>
-    <ion-item *ngFor="let item of rowsInDb">
-      {{ item.url }}
-    </ion-item>
-  </ion-list>
-  <ion-buttons>
     <button block ion-button icon-only (click)="insertSQL()">
       <ion-icon name="add"> INSERT SQL </ion-icon>
     </button>
   </ion-buttons>
-  
-  <ion-list>
-    <button ion-item *ngFor="let item of rowsInDb">
-      {{ item }}
-    </button>  
+  <ion-buttons>
+    <button block ion-button icon-only (click)="updateTask()">
+      <ion-icon name="add"> UPDATE ROW </ion-icon>
+    </button>
+  </ion-buttons>
+  <ion-buttons>
+    <button block ion-button icon-only (click)="getAllTasks()">
+      <ion-icon name="add"> GET ALL DATA </ion-icon>
+    </button>
+  </ion-buttons>
+  <ion-list *ngFor="let row of taskList; let i = index">
+    <ion-item>
+      <h2>{{ row.id }}</h2>
+      <h2>{{ row.url }}</h2>
+      <h2>{{ row.sync }}</h2>
+      <h2>{{ row.params }}</h2>
+      <h2>{{ row.date }}</h2>
+      <h2>{{ row.type }}</h2>
+    </ion-item>
   </ion-list>
 </ion-content>
