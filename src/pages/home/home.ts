@@ -78,7 +78,22 @@ export class HomePage {
       
   }
 
-  updateTaskById() {
+  // SQLite does not have a separate Boolean storage class. Instead, Boolean values are stored as integers 0 (false) and 1 (true).
+  updateTaskById(task, index){
+    
+    task = Object.assign({}, task);
+    task.id = 18;
+    task.sync = 1;
+    
+    this.tasksService.updateTask(task)
+    .then( response => {
+      this.taskList[index] = task;
+    })
+    .catch( error => {
+      console.error( error );
+    })
+  }
+ /*  updateTaskById() {
 
     let task = {
       sync : true,
@@ -93,13 +108,13 @@ export class HomePage {
       .catch(error => {
         console.error(error);
       })
-  }
+  } */
 
   insertSQL() {
 
     let queryUrl = 'http://www.google.es';
     let dataJson = { content: 'Insert Json Here' };
-    let isSync = false;
+    let isSync = 0;
     let parameters = 'Subí y bajá';
     let inDate = new Date();
     let queryType = 'GET';

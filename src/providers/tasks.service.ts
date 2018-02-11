@@ -56,7 +56,9 @@ export class TasksService {
         // unsyncList contains all the rows with sync = false
 
         //HTTP QUERY GOES HERE!
-       /*  this.http.post('https://dondevayaesto.domain',
+       /*  
+       Post
+       this.http.post('https://dondevayaesto.domain',
         {
           cardToken: token,
           amount, 500
@@ -107,7 +109,7 @@ export class TasksService {
 
   createTable() {
 
-    let sql = 'CREATE TABLE IF NOT EXISTS tasks(id INTEGER PRIMARY KEY AUTOINCREMENT, url VARCHAR, data VARCHAR, sync bit, params VARCHAR, date date, type VARCHAR)';
+    let sql = 'CREATE TABLE IF NOT EXISTS tasks(id INTEGER PRIMARY KEY AUTOINCREMENT, url VARCHAR, data VARCHAR, sync BOOLEAN, params VARCHAR, date date, type VARCHAR)';
     return this.db.executeSql(sql, []);
   }
 
@@ -145,10 +147,14 @@ export class TasksService {
       .catch(error => Promise.reject(error));
   }
 
-  updateTask(sync: any, task: any) {
+  updateTask(task: any){
     let sql = 'UPDATE tasks SET sync = ? WHERE id = ?';
     return this.db.executeSql(sql, [task.sync, task.id]);
   }
+ /*  updateTask(sync: any, task) {
+    let sql = 'UPDATE tasks SET sync = ? WHERE id = ?';
+    return this.db.executeSql(sql, [task.sync, task.id]);
+  } */
 
   // Idk if we recive any arrays but i created the method
   parseObjectArraytoJSON(array) {
